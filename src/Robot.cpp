@@ -32,7 +32,7 @@ public:
 		bR = new CANTalon(15);
 		liftMotor = new CANTalon(7);
 		c = new Compressor(0);
-		gearGrabberState = false;
+		shiftToggle = false;
 		timer = 0;
 	}
 
@@ -119,24 +119,26 @@ public:
 		//shift it, i can make it a toggle if thats better
 		
 		if(jL->GetRawButton(3)){
-		
-			if(leftGearShift->Get() == DoubleSolenoid::Value::kForward){
-				leftGearShift->Set(DoubleSolenoid::Value::kReverse);
-			}
 			
-			if(rightGearShift->Get() == DoubleSolenoid::Value::kForward){
-				rightGearShift->Set(DoubleSolenoid::Value::kReverse);
-			}
+			if(shiftToggle){
+				if(leftGearShift->Get() == DoubleSolenoid::Value::kForward){
+					leftGearShift->Set(DoubleSolenoid::Value::kReverse);
+				}
+			
+				if(rightGearShift->Get() == DoubleSolenoid::Value::kForward){
+					rightGearShift->Set(DoubleSolenoid::Value::kReverse);
+				}
+				shiftToggle = false;
+			}else{
+				if(leftGearShift->Get() == DoubleSolenoid::Value::kReverse){
+					leftGearShift->Set(DoubleSolenoid::Value::kForward);
+				}
 
-		}else if(jL->GetRawButton(4)){
-			
-			if(leftGearShift->Get() == DoubleSolenoid::Value::kReverse){
-				leftGearShift->Set(DoubleSolenoid::Value::kForward);
+				if(rightGearShift->Get() == DoubleSolenoid::Value::kReverse){
+					rightGearShift->Set(DoubleSolenoid::Value::kForward);
+				}
 			}
-			
-			if(rightGearShift->Get() == DoubleSolenoid::Value::kReverse){
-				rightGearShift->Set(DoubleSolenoid::Value::kForward);
-			}
+			shiftToggle = true;
 		}
 		
 		//Open/Close the gear grabber
@@ -165,7 +167,7 @@ private:
 	Joystick *jL;
 	Joystick *jR;
 	//Buttons
-	bool gearGrabberState;
+	bool shiftToggle;
 	//Solenoids
 	DoubleSolenoid *leftGearShift;
 	DoubleSolenoid *rightGearShift;
