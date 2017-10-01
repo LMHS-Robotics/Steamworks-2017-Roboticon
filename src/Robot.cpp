@@ -21,7 +21,6 @@ public:
 		CameraServer::GetInstance()->StartAutomaticCapture();//cam0
 		CameraServer::GetInstance()->StartAutomaticCapture();//cam1
 		jL = new Joystick(0);
-		jR = new Joystick(1);
 		leftGearShift = new DoubleSolenoid(0, 1);
 		rightGearShift = new DoubleSolenoid(2, 3);
 		grabSolenoidL = new DoubleSolenoid(4, 5);
@@ -62,42 +61,22 @@ public:
 	}
 
 	void TeleopInit() {
-		c->SetClosedLoopControl(true);
+		c->SetClosedLoopControl(true);// this needs to be changed so the compressor turns on when the robot does, so you start the game with air pressurized
 		leftGearShift->Set(DoubleSolenoid::Value::kForward);
 		rightGearShift->Set(DoubleSolenoid::Value::kForward);
 	}
 
 	void TeleopPeriodic() {
-
-		//Joysticks- what is this?
-		/*if(jL->GetRawAxis(1) < 2.4 && jL->GetRawAxis(1) > -2.4){
-			fL->Set(jL->GetRawAxis(1));
-			bL->Set(jL->GetRawAxis(1));
-		}
-		if(jR->GetRawAxis(1) < 2.4 && jR->GetRawAxis(1) > -2.4){
-			fR->Set(-jR->GetRawAxis(1));
-			bR->Set(-jR->GetRawAxis(1));
-		}*/
 	
 		//tank drive with two joystick axis on ONE joystick (ps3 for example)
-		/*if(fabs(jL->GetRawAxis(1)) > 0.1 || fabs(jL->GetRawAxis(5)) > 0.1){
-				float left = jL->GetRawAxis(1);
+		if(fabs(jL->GetRawAxis(2)) > 0.1 || fabs(jL->GetRawAxis(5)) > 0.1){
+				float left = jL->GetRawAxis(2);
 				float right = -1 * jL->GetRawAxis(5);// must negate the right one so both get some values, as one will be negative and other will be postive before fixing
 				fL->Set(left);
 				bL->Set(left);
 				fR->Set(right);
 				bR->Set(right);
-		}*/
-
-		//tank drive two joysticks:
-		/*if(fabs(jL->GetRawAxis(1)) > 0.1 || fabs(jR->GetRawAxis(1)) > 0.1){
-				float left = jL->GetRawAxis(1);
-				float right = -1 * jR->GetRawAxis(1);// must negate the right one so both get some values, as one will be negative and other will be postive before fixing
-				fL->Set(left);
-				bL->Set(left);
-				fR->Set(right);
-				bR->Set(right);
-		}*/
+		}
 	
 
 		//Shift the gears!
@@ -118,7 +97,7 @@ public:
 		
 		//shift it, i can make it a toggle if thats better
 		
-		if(jL->GetRawButton(3)){
+		if(jL->GetRawButton(5)){
 			
 			if(shiftToggle){
 				if(leftGearShift->Get() == DoubleSolenoid::Value::kForward){
@@ -142,15 +121,15 @@ public:
 		}
 		
 		//Open/Close the gear grabber
-		if(jL->GetRawButton(1)){
+		if(jL->GetRawButton(6)){
 			grabSolenoidL->Set(DoubleSolenoid::Value::kForward);
 			grabSolenoidR->Set(DoubleSolenoid::Value::kForward);
-		} else if (!jL->GetRawButton(1)){
+		} else if (!jL->GetRawButton(6)){
 			grabSolenoidL->Set(DoubleSolenoid::Value::kReverse);
 			grabSolenoidR->Set(DoubleSolenoid::Value::kReverse);
 		}
 
-		if(jL->GetRawButton(2)){
+		if(jL->GetRawButton(1)){
 			liftMotor->Set(1);
 		} else {
 			liftMotor->Set(0);
@@ -165,7 +144,6 @@ private:
 	frc::LiveWindow* lw = LiveWindow::GetInstance();
 	//Joystick
 	Joystick *jL;
-	Joystick *jR;
 	//Buttons
 	bool shiftToggle;
 	//Solenoids
