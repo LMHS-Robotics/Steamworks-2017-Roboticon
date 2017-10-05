@@ -40,7 +40,7 @@ public:
 	}
 
 	void AutonomousInit() override {
-
+		timer = 0;
 	}
 
 	void AutonomousPeriodic() {
